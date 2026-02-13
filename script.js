@@ -176,11 +176,11 @@ letterContent.addEventListener('click', function (e) {
     }
 });
 
-// ========================================
 // SURPRISE BUTTON
 // ========================================
 const surpriseButton = document.getElementById('surpriseButton');
 const surpriseMessage = document.getElementById('surpriseMessage');
+const valentineVideo = document.getElementById('valentineVideo');
 let surpriseShown = false;
 
 surpriseButton.addEventListener('click', function () {
@@ -197,6 +197,15 @@ surpriseButton.addEventListener('click', function () {
 
         // Animate love meter
         animateLoveMeter();
+
+        // Autoplay video
+        setTimeout(() => {
+            if (valentineVideo) {
+                valentineVideo.play().catch(err => {
+                    console.log('Video autoplay prevented:', err);
+                });
+            }
+        }, 500);
     }
 });
 
