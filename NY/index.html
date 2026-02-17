@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine 2026 - Thiên Trang ❤️</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Falling Hearts Background -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworks"></canvas>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Countdown Section -->
+            <div class="countdown-section">
+                <h3 class="countdown-title">⏰ Thời gian chúng ta bên nhau ⏰</h3>
+                <div class="countdown-display" id="countdown">
+                    <div class="time-unit">
+                        <span class="time-value" id="days">0</span>
+                        <span class="time-label">Ngày</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="hours">0</span>
+                        <span class="time-label">Giờ</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="minutes">0</span>
+                        <span class="time-label">Phút</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="seconds">0</span>
+                        <span class="time-label">Giây</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1 class="main-title" id="mainTitle">
+                    <span class="letter">T</span>
+                    <span class="letter">h</span>
+                    <span class="letter">i</span>
+                    <span class="letter">ê</span>
+                    <span class="letter">n</span>
+                    <span class="letter"> </span>
+                    <span class="letter">T</span>
+                    <span class="letter">r</span>
+                    <span class="letter">a</span>
+                    <span class="letter">n</span>
+                    <span class="letter">g</span>
+                </h1>
+                <div class="heart-icon" id="heartIcon">❤️</div>
+                <p class="subtitle">Người con gái anh yêu nhất trên đời 💖</p>
+            </div>
+
+            <!-- Love Letter -->
+            <div class="love-letter-container">
+                <div class="envelope" id="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="envelope-body">
+                        <span class="envelope-text">💌 Tặng em nè 💌</span>
+                    </div>
+                </div>
+                <div class="letter-content" id="letterContent">
+                    <div class="letter-paper">
+                        <h2>Gửi em yêu Thiên Trang của anh,</h2>
+                        <p>
+                            Trong ngày <span class="letter-highlight">Valentine</span> đặc biệt này,
+                            anh muốn nói với em rằng em là <span class="letter-highlight">món quà quý giá nhất</span>
+                            mà cuộc đời trao cho anh.
+                        </p>
+                        <p>
+                            Mỗi khoảnh khắc bên em đều là <span class="letter-highlight">kỷ niệm đáng nhớ</span>,
+                            mỗi nụ cười của em đều làm trái tim anh rung động.
+                        </p>
+                        <p>
+                            Anh hứa sẽ luôn ở bên em, yêu thương em, chăm sóc em và làm em hạnh phúc mỗi ngày.
+                        </p>
+                        <div class="letter-signature">
+                            <p>Yêu em vô cùng,</p>
+                            <p class="signature-name">❤️ Người yêu của em ❤️</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Card with Typing Effect -->
+            <div class="message-card">
+                <div class="card-header">
+                    <span class="date">14 Tháng 2, 2026</span>
+                </div>
+                <div class="card-body">
+                    <div class="typing-text" id="typingText"></div>
+                </div>
+            </div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button class="love-button primary-btn" id="surpriseButton">
+                    <span class="button-text">🎁 Nhận quà Valentine 🎁</span>
+                </button>
+            </div>
+
+            <!-- Surprise Message -->
+            <div class="surprise-message" id="surpriseMessage">
+                <div class="surprise-content">
+                    <h2>🌹 Dành tặng em 🌹</h2>
+                    <div class="video-container">
+                        <video id="valentineVideo" class="valentine-video" controls>
+                            <source src="pictures/video.mp4" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Love Meter -->
+            <div class="love-meter-section" id="loveMeterSection">
+                <h3 class="love-meter-title">💕 Mức độ yêu em 💕</h3>
+                <div class="love-meter">
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="meterFill"></div>
+                    </div>
+                    <div class="meter-label" id="meterLabel">0%</div>
+                </div>
+            </div>
+
+            <!-- 3D Photo Carousel -->
+            <div class="gallery">
+                <h3 class="gallery-title">📸 Người con gái trong ảnh là người đẹp nhất 📸</h3>
+                <div class="carousel-3d">
+                    <div class="carousel-container" id="carouselContainer">
+                        <div class="carousel-item active">
+                            <div class="photo-frame">
+                                <img src="pictures/z7532716992683_b180bd1fb601fa1faea1f17c6c0a3543.jpg" alt="Kỷ niệm 1"
+                                    class="carousel-photo">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="photo-frame">
+                                <img src="pictures/z7532716999244_0b62b1e0f3b0d3a084c9239be492f0fc.jpg" alt="Kỷ niệm 2"
+                                    class="carousel-photo">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="photo-frame">
+                                <img src="pictures/z7532717004251_3f25859432ed233457e2129cd88ab6e3.jpg" alt="Kỷ niệm 3"
+                                    class="carousel-photo">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="photo-frame">
+                                <img src="pictures/z7532717007770_ec2f0589f1c74d4b9d72d6e91e80a971.jpg" alt="Kỷ niệm 4"
+                                    class="carousel-photo">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="photo-frame">
+                                <img src="pictures/z7532717895207_cab8cc3b13d3ed1c989fcc45b14dde8a.jpg" alt="Kỷ niệm 5"
+                                    class="carousel-photo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevBtn">◀</button>
+                        <button class="carousel-btn" id="nextBtn">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Made with ❤️ for Thiên Trang</p>
+                <p class="footer-date">Valentine's Day 2026</p>
+                <p class="footer-quote">"Em là người con gái anh yêu nhất trên đời 💖"</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
