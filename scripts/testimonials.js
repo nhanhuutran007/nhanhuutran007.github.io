@@ -88,7 +88,7 @@ function displayTestimonials(testimonials) {
                             <div class="avatar">
                                 <img src="${avatarUrl}" width="60" height="60" alt="${escapeHtml(testimonial.name)}" 
                                      onerror="this.src='images/default-avatar.svg'" 
-                                     style="border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
+                                     style="object-fit: cover;" />
                             </div>
                             <div class="header-bio ms-3 mb-0">
                                 <h3 class="h6 mb-1 fw-bold">
@@ -132,7 +132,7 @@ function displayTestimonials(testimonials) {
                 <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" 
                         ${i === 0 ? 'class="active" aria-current="true"' : ''} 
                         aria-label="Slide ${i + 1}"
-                        style="width: 12px; height: 12px; border-radius: 50%; margin: 0 6px; opacity: ${i === 0 ? '1' : '0.5'}; background-color: #0d6efd;"></button>
+                        style="width: 24px; height: 3px; border-radius: 2px; margin: 0 4px; opacity: ${i === 0 ? '1' : '0.3'}; background-color: #6c757d; border: none;"></button>
             `;
         }
 
@@ -140,22 +140,22 @@ function displayTestimonials(testimonials) {
             </div>
         `;
 
-        // Navigation buttons (subtle, chỉ hiện khi hover)
+        // Navigation buttons (nhỏ hơn, tinh tế hơn)
         carouselHTML += `
             <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev" 
-                    style="width: 10%; opacity: 0; transition: opacity 0.3s;" 
-                    onmouseover="this.style.opacity='0.7'" 
-                    onmouseout="this.style.opacity='0'">
+                    style="width: 35px; height: 35px; top: 50%; transform: translateY(-50%); left: -45px; opacity: 0.4; transition: opacity 0.3s; background-color: rgba(108, 117, 125, 0.1); border-radius: 50%; border: 1px solid rgba(108, 117, 125, 0.2);" 
+                    onmouseover="this.style.opacity='0.8'" 
+                    onmouseout="this.style.opacity='0.4'">
                 <span class="carousel-control-prev-icon" aria-hidden="true" 
-                      style="filter: invert(0.5); background-size: 60%;"></span>
+                      style="filter: invert(0.5); background-size: 50%; width: 16px; height: 16px;"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next" 
-                    style="width: 10%; opacity: 0; transition: opacity 0.3s;" 
-                    onmouseover="this.style.opacity='0.7'" 
-                    onmouseout="this.style.opacity='0'">
+                    style="width: 35px; height: 35px; top: 50%; transform: translateY(-50%); right: -45px; opacity: 0.4; transition: opacity 0.3s; background-color: rgba(108, 117, 125, 0.1); border-radius: 50%; border: 1px solid rgba(108, 117, 125, 0.2);" 
+                    onmouseover="this.style.opacity='0.8'" 
+                    onmouseout="this.style.opacity='0.4'">
                 <span class="carousel-control-next-icon" aria-hidden="true" 
-                      style="filter: invert(0.5); background-size: 60%;"></span>
+                      style="filter: invert(0.5); background-size: 50%; width: 16px; height: 16px;"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         `;
