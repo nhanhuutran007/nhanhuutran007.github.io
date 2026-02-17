@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Debug Testimonials Display</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            background: #f4f4f4;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔍 Debug Testimonials Display</h1>
+
+        <button onclick="testAPI()">1. Test API</button>
+        <button onclick="testDisplay()">2. Test Display Function</button>
+        <button onclick="inspectDOM()">3. Inspect DOM</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbySeJhmoIi3vyhE3Ic7MgkLc5iplZ-z8RnmGA5BeL2u6p_Eq8ZA1JuCGmeZmWdI0BQG/exec';
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = '⏳ Testing API...';
+
+            try {
+                const url = `${API_URL}?t=${Date.now()}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+
+                const result = await response.json();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '✅ API Response:\n\n' + JSON.stringify(result, null, 2);
+
+                console.log('API Result:', result);
+
+                if (result.success && result.data) {
+                    console.log('Number of testimonials:', result.data.length);
+                    result.data.forEach((t, i) => {
+                        console.log(`Testimonial ${i + 1}:`, t);
+                    });
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error:\n\n' + error.message + '\n\n' + error.stack;
+                console.error('Error:', error);
+            }
+        }
+
+        function testDisplay() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = '⏳ Testing display function...';
+
+            // Sample data
+            const sampleData = [
+                {
+                    id: 1,
+                    name: "Test Name",
+                    position: "Test Position",
+                    content: "Test content here",
+                    created_at: new Date(),
+                    avatar_url: null
+                }
+            ];
+
+            try {
+                // Test escapeHtml function
+                const testHTML = '<script>alert("test")</script>';
+    console.log('Testing escapeHtml:', escapeHtml(testHTML));
+
+    resultDiv.className = 'result success';
+    resultDiv.textContent = '✅ Sample data:\n\n' + JSON.stringify(sampleData, null, 2);
+
+    console.log('Sample data:', sampleData);
+    } catch (error) {
+    resultDiv.className = 'result error';
+    resultDiv.textContent = '❌ Error:\n\n' + error.message;
+    console.error('Error:', error);
+    }
+    }
+
+    function inspectDOM() {
+    const resultDiv = document.getElementById('result');
+    const container = document.querySelector('#references .row');
+
+    if (!container) {
+    resultDiv.className = 'result error';
+    resultDiv.textContent = '❌ Container #references .row NOT FOUND!';
+    return;
+    }
+
+    resultDiv.className = 'result success';
+    resultDiv.textContent = '✅ Container found!\n\n' +
+    'HTML:\n' + container.innerHTML.substring(0, 500) + '...\n\n' +
+    'Children count: ' + container.children.length;
+
+    console.log('Container:', container);
+    console.log('HTML:', container.innerHTML);
+    }
+
+    function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+    }
+    </script>
+</body>
+
+</html>

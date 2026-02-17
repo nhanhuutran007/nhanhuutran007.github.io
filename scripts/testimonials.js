@@ -54,28 +54,27 @@ function displayTestimonials(testimonials) {
 
     // Tạo HTML cho mỗi testimonial
     testimonials.forEach((testimonial, index) => {
-        const delay = index * 100; // Animation delay
         const avatarUrl = testimonial.avatar_url || 'images/default-avatar.jpg';
 
         const testimonialHTML = `
             <div class="col-md-6">
                 <div class="d-flex mb-2">
                     <div class="avatar">
-                        <img src="${avatarUrl}" width="60" height="60" alt="${testimonial.name}" 
+                        <img src="${avatarUrl}" width="60" height="60" alt="${escapeHtml(testimonial.name)}" 
                              onerror="this.src='images/default-avatar.jpg'" />
                     </div>
                     <div class="header-bio m-3 mb-0">
-                        <h3 class="h6 mb-1" data-aos="fade-left" data-aos-delay="${delay}">
+                        <h3 class="h6 mb-1">
                             ${escapeHtml(testimonial.name)}
                         </h3>
-                        <p class="text-muted text-small" data-aos="fade-left" data-aos-delay="${delay + 100}">
+                        <p class="text-muted text-small">
                             ${escapeHtml(testimonial.position)}
                         </p>
                     </div>
                 </div>
                 <div class="d-flex">
                     <i class="text-secondary fas fa-quote-left"></i>
-                    <p class="lead mx-2" data-aos="fade-left" data-aos-delay="${delay + 100}">
+                    <p class="lead mx-2">
                         ${escapeHtml(testimonial.content)}
                     </p>
                 </div>
@@ -84,11 +83,6 @@ function displayTestimonials(testimonials) {
 
         container.insertAdjacentHTML('beforeend', testimonialHTML);
     });
-
-    // Refresh AOS animations nếu có
-    if (typeof AOS !== 'undefined') {
-        AOS.refresh();
-    }
 }
 
 /**
