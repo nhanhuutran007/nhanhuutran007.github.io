@@ -38,7 +38,7 @@ async function loadTestimonials() {
 }
 
 /**
- * Hiển thị testimonials lên trang
+ * Hiển thị testimonials lên trang với carousel (2 items mỗi lần)
  * @param {Array} testimonials - Mảng các testimonial objects
  */
 function displayTestimonials(testimonials) {
@@ -52,37 +52,120 @@ function displayTestimonials(testimonials) {
     // Xóa nội dung cũ
     container.innerHTML = '';
 
-    // Tạo HTML cho mỗi testimonial
-    testimonials.forEach((testimonial, index) => {
-        const avatarUrl = testimonial.avatar_url || 'images/default-avatar.jpg';
+    if (testimonials.length === 0) {
+        container.innerHTML = '<p class="text-muted">Chưa có đánh giá nào.</p>';
+        return;
+    }
 
-        const testimonialHTML = `
-            <div class="col-md-6">
-                <div class="d-flex mb-2">
-                    <div class="avatar">
-                        <img src="${avatarUrl}" width="60" height="60" alt="${escapeHtml(testimonial.name)}" 
-                             onerror="this.src='images/default-avatar.jpg'" />
-                    </div>
-                    <div class="header-bio m-3 mb-0">
-                        <h3 class="h6 mb-1">
-                            ${escapeHtml(testimonial.name)}
-                        </h3>
-                        <p class="text-muted text-small">
-                            ${escapeHtml(testimonial.position)}
-                        </p>
+    // Tạo carousel wrapper
+    const carouselId = 'testimonialsCarousel';
+    const itemsPerPage = 2;
+    const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+
+    let carouselHTML = `
+        <div id="${carouselId}" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000" data-bs-touch="true" style="width: 100%;">
+            <div class="carousel-inner" style="min-height: 200px;">
+    `;
+
+    // Tạo carousel items (mỗi item chứa 2 testimonials)
+    for (let i = 0; i < totalPages; i++) {
+        const start = i * itemsPerPage;
+        const end = Math.min(start + itemsPerPage, testimonials.length);
+        const pageTestimonials = testimonials.slice(start, end);
+
+        carouselHTML += `
+            <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                <div class="row">
+        `;
+
+        pageTestimonials.forEach(testimonial => {
+            const avatarUrl = testimonial.avatar_url || 'images/default-avatar.svg';
+
+            carouselHTML += `
+                <div class="col-md-6 mb-3">
+                    <div class="testimonial-card h-100">
+                        <div class="d-flex mb-3">
+                            <div class="avatar">
+                                <img src="${avatarUrl}" width="60" height="60" alt="${escapeHtml(testimonial.name)}" 
+                                     onerror="this.src='images/default-avatar.svg'" 
+                                     style="border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
+                            </div>
+                            <div class="header-bio ms-3 mb-0">
+                                <h3 class="h6 mb-1 fw-bold">
+                                    ${escapeHtml(testimonial.name)}
+                                </h3>
+                                <p class="text-muted text-small mb-0">
+                                    ${escapeHtml(testimonial.position)}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <i class="text-primary fas fa-quote-left me-2" style="font-size: 1.5rem; opacity: 0.3;"></i>
+                            <p class="lead mb-0" style="font-size: 1rem; line-height: 1.6;">
+                                ${escapeHtml(testimonial.content)}
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex">
-                    <i class="text-secondary fas fa-quote-left"></i>
-                    <p class="lead mx-2">
-                        ${escapeHtml(testimonial.content)}
-                    </p>
+            `;
+        });
+
+        carouselHTML += `
                 </div>
             </div>
         `;
+    }
 
-        container.insertAdjacentHTML('beforeend', testimonialHTML);
-    });
+    carouselHTML += `
+            </div>
+    `;
+
+    // Chỉ hiển thị controls nếu có nhiều hơn 1 trang
+    if (totalPages > 1) {
+        // Pagination dots (đẹp hơn)
+        carouselHTML += `
+            <div class="carousel-indicators position-relative mt-4 mb-0" style="position: static !important;">
+        `;
+
+        for (let i = 0; i < totalPages; i++) {
+            carouselHTML += `
+                <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" 
+                        ${i === 0 ? 'class="active" aria-current="true"' : ''} 
+                        aria-label="Slide ${i + 1}"
+                        style="width: 12px; height: 12px; border-radius: 50%; margin: 0 6px; opacity: ${i === 0 ? '1' : '0.5'}; background-color: #0d6efd;"></button>
+            `;
+        }
+
+        carouselHTML += `
+            </div>
+        `;
+
+        // Navigation buttons (subtle, chỉ hiện khi hover)
+        carouselHTML += `
+            <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev" 
+                    style="width: 10%; opacity: 0; transition: opacity 0.3s;" 
+                    onmouseover="this.style.opacity='0.7'" 
+                    onmouseout="this.style.opacity='0'">
+                <span class="carousel-control-prev-icon" aria-hidden="true" 
+                      style="filter: invert(0.5); background-size: 60%;"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next" 
+                    style="width: 10%; opacity: 0; transition: opacity 0.3s;" 
+                    onmouseover="this.style.opacity='0.7'" 
+                    onmouseout="this.style.opacity='0'">
+                <span class="carousel-control-next-icon" aria-hidden="true" 
+                      style="filter: invert(0.5); background-size: 60%;"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        `;
+    }
+
+    carouselHTML += `
+        </div>
+    `;
+
+    container.innerHTML = carouselHTML;
 }
 
 /**
