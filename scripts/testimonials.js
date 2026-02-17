@@ -6,7 +6,7 @@
 // Sau khi deploy Apps Script, bạn sẽ nhận được URL dạng:
 // https://script.google.com/macros/s/AKfycby.../exec
 // Paste URL đó vào đây:
-const API_URL = 'https://script.google.com/macros/s/AKfycbwfGOAXP14sv1rD9dIJuaHbHHrT79CZa8TDNc40hCMNiZllW3uY_p9fdWA1xw5LROqg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbySeJhmoIi3vyhE3Ic7MgkLc5iplZ-z8RnmGA5BeL2u6p_Eq8ZA1JuCGmeZmWdI0BQG/exec';
 
 // Nếu chưa có URL, để tạm như này để test (sẽ báo lỗi)
 // const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
