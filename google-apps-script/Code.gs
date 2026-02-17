@@ -17,7 +17,7 @@
  */
 
 // Tên sheet (có thể thay đổi nếu bạn đặt tên khác)
-const SHEET_NAME = 'Sheet1'; // Đổi thành 'Sheet1' hoặc tên sheet của bạn
+const SHEET_NAME = 'Sheet1'; // Đổi thành tên sheet của bạn
 
 /**
  * Xử lý GET request - Lấy testimonials đã duyệt
@@ -128,7 +128,8 @@ function doPost(e) {
 }
 
 /**
- * Tạo JSON response với CORS headers
+ * Tạo JSON response
+ * CORS được xử lý tự động bởi Apps Script khi deploy với "Anyone" access
  */
 function createResponse(success, data, message) {
   const response = {
@@ -137,16 +138,9 @@ function createResponse(success, data, message) {
     message: message
   };
   
-  const output = ContentService.createTextOutput(JSON.stringify(response));
-  output.setMimeType(ContentService.MimeType.JSON);
-  
-  // ⚠️ QUAN TRỌNG: Thêm CORS headers để cho phép fetch từ GitHub Pages
-  output.setHeader('Access-Control-Allow-Origin', '*');
-  output.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  output.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  output.setHeader('Access-Control-Max-Age', '86400');
-  
-  return output;
+  return ContentService
+    .createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
