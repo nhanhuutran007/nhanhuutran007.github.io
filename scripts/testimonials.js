@@ -16,11 +16,12 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbySeJhmoIi3vyhE3Ic7MgkL
  */
 async function loadTestimonials() {
     try {
-        const response = await fetch(API_URL, {
+        // Sử dụng URL với timestamp để tránh cache
+        const url = `${API_URL}?t=${Date.now()}`;
+
+        const response = await fetch(url, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            redirect: 'follow'
         });
 
         const result = await response.json();
@@ -98,9 +99,7 @@ async function submitTestimonial(data) {
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            redirect: 'follow',
             body: JSON.stringify(data)
         });
 
