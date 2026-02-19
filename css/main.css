@@ -1,4 +1,3 @@
-/* Timeline custom component */
 .timeline-card {
   position: relative;
   margin-left: 16px;
@@ -120,8 +119,6 @@ footer a:not(.nav-link) {
 }
 
 @media (max-width: 767px) {
-
-  /* disable animations on mobile */
   [data-aos] {
     opacity: 1 !important;
     transform: translate(0) scale(1) !important;
@@ -200,7 +197,6 @@ footer a:not(.nav-link) {
   }
 }
 
-/* ===== TESTIMONIAL CARDS ===== */
 .testimonial-card {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.07);
@@ -237,7 +233,6 @@ footer a:not(.nav-link) {
   margin: 0;
 }
 
-/* ===== TESTIMONIAL CAROUSEL NAVIGATION ===== */
 .testimonial-nav-btn {
   display: inline-flex;
   align-items: center;
@@ -274,4 +269,56 @@ footer a:not(.nav-link) {
 .testimonial-dots .dot.active {
   background: var(--bs-info);
   width: 32px;
+}
+
+a.text-teal {
+  color: var(--bs-teal) !important;
+  text-decoration: none;
+}
+
+a.text-teal:hover {
+  text-decoration: underline;
+}
+
+.education-section hr {
+  opacity: 0.15;
+}
+
+.bg-image {
+  position: relative;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+.bg-image>img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.mask>div {
+  position: relative;
+  z-index: 1;
+}
+
+.shadow-1-strong {
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.16) !important;
+}
+
+.shadow-2-strong {
+  box-shadow: 0 8px 17px rgba(0, 0, 0, 0.2) !important;
 }
