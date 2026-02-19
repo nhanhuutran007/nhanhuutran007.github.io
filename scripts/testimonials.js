@@ -1,176 +1,157 @@
 // ===== JAVASCRIPT XỬ LÝ TESTIMONIALS =====
 // File: testimonials.js
-// Mục đích: Xử lý gửi và hiển thị testimonials từ Google Sheets
 
-// ⚠️ QUAN TRỌNG: Thay đổi URL này sau khi deploy Google Apps Script
-// Sau khi deploy Apps Script, bạn sẽ nhận được URL dạng:
-// https://script.google.com/macros/s/AKfycby.../exec
-// Paste URL đó vào đây:
 const API_URL = 'https://script.google.com/macros/s/AKfycbySeJhmoIi3vyhE3Ic7MgkLc5iplZ-z8RnmGA5BeL2u6p_Eq8ZA1JuCGmeZmWdI0BQG/exec';
 
-// Nếu chưa có URL, để tạm như này để test (sẽ báo lỗi)
-// const API_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+// 2 card tĩnh mặc định luôn hiển thị ở slide đầu
+const STATIC_CARDS = [
+    {
+        name: 'Ngọc Nhi',
+        position: 'CTV / Designer',
+        content: 'Nhan displays exemplary professionalism and is able to take on challenges. I love his.',
+        avatar_url: 'images/reference-image-1.jpg'
+    },
+    {
+        name: 'Mẹc siuu',
+        position: 'Coder Part-Time / Web Designer',
+        content: 'Nhan is a great co-worker and problem solver. He is quick to extend his helping hand and makes a good team player.',
+        avatar_url: 'images/reference-image-2.jpg'
+    }
+];
 
 /**
- * Tải và hiển thị testimonials từ database
+ * Tải testimonials từ database rồi render carousel thống nhất
  */
 async function loadTestimonials() {
+    let dynamicCards = [];
+
     try {
-        // Sử dụng URL với timestamp để tránh cache
         const url = `${API_URL}?t=${Date.now()}`;
-
-        const response = await fetch(url, {
-            method: 'GET',
-            redirect: 'follow'
-        });
-
+        const response = await fetch(url, { method: 'GET', redirect: 'follow' });
         const result = await response.json();
-
         if (result.success && result.data && result.data.length > 0) {
-            displayTestimonials(result.data);
-        } else {
-            console.log('Chưa có testimonials nào được duyệt');
+            dynamicCards = result.data;
         }
     } catch (error) {
         console.error('Lỗi khi tải testimonials:', error);
-        // Giữ nguyên testimonials mặc định trong HTML nếu không tải được từ DB
     }
+
+    // Gộp: static cards trước, dynamic cards sau
+    const allCards = [...STATIC_CARDS, ...dynamicCards];
+    renderCarousel(allCards);
 }
 
 /**
- * Hiển thị testimonials lên trang với carousel (2 items mỗi lần)
- * @param {Array} testimonials - Mảng các testimonial objects
+ * Tạo HTML cho một testimonial card
  */
-function displayTestimonials(testimonials) {
-    const container = document.querySelector('#references .row');
-
-    if (!container) {
-        console.error('Không tìm thấy container để hiển thị testimonials');
-        return;
-    }
-
-    // Xóa nội dung cũ
-    container.innerHTML = '';
-
-    if (testimonials.length === 0) {
-        container.innerHTML = '<p class="text-muted">Chưa có đánh giá nào.</p>';
-        return;
-    }
-
-    // Tạo carousel wrapper
-    const carouselId = 'testimonialsCarousel';
-    const itemsPerPage = 2;
-    const totalPages = Math.ceil(testimonials.length / itemsPerPage);
-
-    let carouselHTML = `
-        <div id="${carouselId}" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000" data-bs-touch="true" style="width: 100%;">
-            <div class="carousel-inner" style="min-height: 200px;">
-    `;
-
-    // Tạo carousel items (mỗi item chứa 2 testimonials)
-    for (let i = 0; i < totalPages; i++) {
-        const start = i * itemsPerPage;
-        const end = Math.min(start + itemsPerPage, testimonials.length);
-        const pageTestimonials = testimonials.slice(start, end);
-
-        carouselHTML += `
-            <div class="carousel-item ${i === 0 ? 'active' : ''}">
-                <div class="row">
-        `;
-
-        pageTestimonials.forEach(testimonial => {
-            const avatarUrl = testimonial.avatar_url || 'images/default-avatar.svg';
-
-            carouselHTML += `
-                <div class="col-md-6 mb-3">
-                    <div class="testimonial-card h-100">
-                        <div class="d-flex mb-3">
-                            <div class="avatar">
-                                <img src="${avatarUrl}" width="60" height="60" alt="${escapeHtml(testimonial.name)}" 
-                                     onerror="this.src='images/default-avatar.svg'" 
-                                     style="object-fit: cover;" />
-                            </div>
-                            <div class="header-bio ms-3 mb-0">
-                                <h3 class="h6 mb-1 fw-bold">
-                                    ${escapeHtml(testimonial.name)}
-                                </h3>
-                                <p class="text-muted text-small mb-0">
-                                    ${escapeHtml(testimonial.position)}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <i class="text-primary fas fa-quote-left me-2" style="font-size: 1.5rem; opacity: 0.3;"></i>
-                            <p class="lead mb-0" style="font-size: 1rem; line-height: 1.6;">
-                                ${escapeHtml(testimonial.content)}
-                            </p>
-                        </div>
+function makeCardHTML(card) {
+    const avatar = card.avatar_url || 'images/default-avatar.svg';
+    return `
+        <div class="col-md-6 mb-3">
+            <div class="testimonial-card h-100">
+                <div class="d-flex mb-2">
+                    <div class="avatar">
+                        <img src="${avatar}" width="60" height="60"
+                             alt="${escapeHtml(card.name)}"
+                             onerror="this.src='images/default-avatar.svg'" />
+                    </div>
+                    <div style="margin-left:1rem;">
+                        <h3 class="h6 mb-1 fw-bold">${escapeHtml(card.name)}</h3>
+                        <p class="text-muted text-small mb-0">${escapeHtml(card.position)}</p>
                     </div>
                 </div>
-            `;
-        });
-
-        carouselHTML += `
+                <div class="d-flex">
+                    <i class="text-secondary fas fa-quote-left quote-icon"></i>
+                    <p class="lead mx-2 testimonial-text">${escapeHtml(card.content)}</p>
                 </div>
             </div>
-        `;
-    }
-
-    carouselHTML += `
-            </div>
+        </div>
     `;
+}
 
-    // Chỉ hiển thị controls nếu có nhiều hơn 1 trang
-    if (totalPages > 1) {
-        // Pagination dots (đẹp hơn)
-        carouselHTML += `
-            <div class="carousel-indicators position-relative mt-4 mb-0" style="position: static !important;">
-        `;
+/**
+ * Render carousel thống nhất — 2 cards mỗi slide, tự động chuyển 5 giây
+ * @param {Array} cards - Tất cả cards (static + dynamic)
+ */
+function renderCarousel(cards) {
+    const container = document.getElementById('all-testimonials');
+    if (!container) return;
 
-        for (let i = 0; i < totalPages; i++) {
-            carouselHTML += `
-                <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" 
-                        ${i === 0 ? 'class="active" aria-current="true"' : ''} 
-                        aria-label="Slide ${i + 1}"
-                        style="width: 24px; height: 3px; border-radius: 2px; margin: 0 4px; opacity: ${i === 0 ? '1' : '0.3'}; background-color: #6c757d; border: none;"></button>
-            `;
-        }
+    container.innerHTML = '';
 
-        carouselHTML += `
-            </div>
-        `;
+    const carouselId = 'testimonialsCarousel';
+    const itemsPerPage = 2;
+    const totalPages = Math.ceil(cards.length / itemsPerPage);
 
-        // Navigation buttons (nhỏ hơn, tinh tế hơn)
-        carouselHTML += `
-            <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev" 
-                    style="width: 35px; height: 35px; top: 50%; transform: translateY(-50%); left: -45px; opacity: 0.4; transition: opacity 0.3s; background-color: rgba(108, 117, 125, 0.1); border-radius: 50%; border: 1px solid rgba(108, 117, 125, 0.2);" 
-                    onmouseover="this.style.opacity='0.8'" 
-                    onmouseout="this.style.opacity='0.4'">
-                <span class="carousel-control-prev-icon" aria-hidden="true" 
-                      style="filter: invert(0.5); background-size: 50%; width: 16px; height: 16px;"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next" 
-                    style="width: 35px; height: 35px; top: 50%; transform: translateY(-50%); right: -45px; opacity: 0.4; transition: opacity 0.3s; background-color: rgba(108, 117, 125, 0.1); border-radius: 50%; border: 1px solid rgba(108, 117, 125, 0.2);" 
-                    onmouseover="this.style.opacity='0.8'" 
-                    onmouseout="this.style.opacity='0.4'">
-                <span class="carousel-control-next-icon" aria-hidden="true" 
-                      style="filter: invert(0.5); background-size: 50%; width: 16px; height: 16px;"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        `;
+    // ── Slides ────────────────────────────────────────────────────────────────
+    let slidesHTML = '';
+    for (let i = 0; i < totalPages; i++) {
+        const page = cards.slice(i * itemsPerPage, Math.min((i + 1) * itemsPerPage, cards.length));
+        slidesHTML += `<div class="carousel-item ${i === 0 ? 'active' : ''}"><div class="row">`;
+        page.forEach(card => { slidesHTML += makeCardHTML(card); });
+        slidesHTML += `</div></div>`;
     }
 
-    carouselHTML += `
+    // ── Navigation dots ───────────────────────────────────────────────────────
+    let dotsHTML = '';
+    for (let i = 0; i < totalPages; i++) {
+        dotsHTML += `<span class="dot ${i === 0 ? 'active' : ''}"
+                          data-bs-target="#${carouselId}"
+                          data-bs-slide-to="${i}"
+                          aria-label="Slide ${i + 1}"></span>`;
+    }
+
+    // ── Full carousel HTML ────────────────────────────────────────────────────
+    const navHTML = totalPages > 1 ? `
+        <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
+            <button class="testimonial-nav-btn" type="button"
+                    data-bs-target="#${carouselId}" data-bs-slide="prev" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="testimonial-dots d-flex align-items-center">${dotsHTML}</div>
+            <button class="testimonial-nav-btn" type="button"
+                    data-bs-target="#${carouselId}" data-bs-slide="next" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    ` : '';
+
+    container.innerHTML = `
+        <div id="${carouselId}" class="carousel slide carousel-fade">
+            <div class="carousel-inner">${slidesHTML}</div>
+            ${navHTML}
         </div>
     `;
 
-    container.innerHTML = carouselHTML;
+    // Khởi tạo Bootstrap Carousel thủ công (vì inject sau page load)
+    const carouselEl = document.getElementById(carouselId);
+    if (!carouselEl) return;
+
+    const bsCarousel = new bootstrap.Carousel(carouselEl, {
+        interval: 5000,
+        ride: 'carousel',
+        touch: true
+    });
+
+    // Wire nút prev / next
+    container.querySelector('[aria-label="Previous"]')?.addEventListener('click', () => bsCarousel.prev());
+    container.querySelector('[aria-label="Next"]')?.addEventListener('click', () => bsCarousel.next());
+
+    // Wire dots
+    container.querySelectorAll('.testimonial-dots .dot').forEach((dot, idx) => {
+        dot.addEventListener('click', () => bsCarousel.to(idx));
+    });
+
+    // Sync dots khi slide chuyển
+    carouselEl.addEventListener('slid.bs.carousel', function (e) {
+        container.querySelectorAll('.testimonial-dots .dot').forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === e.to);
+        });
+    });
 }
 
 /**
  * Gửi testimonial mới lên server
- * @param {Object} data - Object chứa name, position, content
  */
 async function submitTestimonial(data) {
     try {
@@ -179,15 +160,10 @@ async function submitTestimonial(data) {
             redirect: 'follow',
             body: JSON.stringify(data)
         });
-
-        const result = await response.json();
-        return result;
+        return await response.json();
     } catch (error) {
         console.error('Lỗi khi gửi testimonial:', error);
-        return {
-            success: false,
-            message: 'Không thể kết nối đến server. Vui lòng thử lại sau.'
-        };
+        return { success: false, message: 'Không thể kết nối đến server. Vui lòng thử lại sau.' };
     }
 }
 
@@ -201,34 +177,25 @@ function handleFormSubmit(event) {
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton.textContent;
 
-    // Lấy dữ liệu từ form
     const data = {
         name: form.querySelector('#name').value.trim(),
         position: form.querySelector('#position').value.trim(),
         content: form.querySelector('#message').value.trim()
     };
 
-    // Validate phía client
     if (data.name.length < 2 || data.name.length > 100) {
-        showMessage('Tên phải từ 2-100 ký tự', 'error');
-        return;
+        showMessage('Tên phải từ 2-100 ký tự', 'error'); return;
     }
-
     if (data.position.length < 2 || data.position.length > 100) {
-        showMessage('Chức vụ phải từ 2-100 ký tự', 'error');
-        return;
+        showMessage('Chức vụ phải từ 2-100 ký tự', 'error'); return;
     }
-
     if (data.content.length < 10 || data.content.length > 1000) {
-        showMessage('Nội dung đánh giá phải từ 10-1000 ký tự', 'error');
-        return;
+        showMessage('Nội dung đánh giá phải từ 10-1000 ký tự', 'error'); return;
     }
 
-    // Disable button và hiển thị loading
     submitButton.disabled = true;
     submitButton.textContent = 'Đang gửi...';
 
-    // Gửi dữ liệu
     submitTestimonial(data)
         .then(result => {
             if (result.success) {
@@ -239,7 +206,6 @@ function handleFormSubmit(event) {
             }
         })
         .finally(() => {
-            // Enable button trở lại
             submitButton.disabled = false;
             submitButton.textContent = originalButtonText;
         });
@@ -247,11 +213,8 @@ function handleFormSubmit(event) {
 
 /**
  * Hiển thị thông báo cho user
- * @param {string} message - Nội dung thông báo
- * @param {string} type - Loại thông báo: 'success' hoặc 'error'
  */
 function showMessage(message, type = 'info') {
-    // Tạo element thông báo
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
     alertDiv.role = 'alert';
@@ -259,20 +222,13 @@ function showMessage(message, type = 'info') {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-
-    // Thêm vào form
     const form = document.querySelector('#contact form');
     form.insertBefore(alertDiv, form.firstChild);
-
-    // Tự động ẩn sau 5 giây
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 5000);
+    setTimeout(() => alertDiv.remove(), 5000);
 }
 
 /**
  * Escape HTML để tránh XSS
- * @param {string} text - Text cần escape
  */
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -282,10 +238,9 @@ function escapeHtml(text) {
 
 // Khởi tạo khi DOM đã load
 document.addEventListener('DOMContentLoaded', function () {
-    // Tải testimonials từ database
+    // Luôn render carousel ngay (với static cards), sau đó load dynamic nếu có
     loadTestimonials();
 
-    // Gắn event listener cho form
     const form = document.querySelector('#contact form');
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
