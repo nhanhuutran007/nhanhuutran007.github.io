@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tran Huu Nhan - Network Engineer Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #00ff41; /* Classic Matrix Green */
+            --prompt-color: #008f11;
+            --highlight-color: #00ffff; /* Cyan accents */
+            --font-main: 'Consolas', 'Fira Code', 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .terminal {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid #333;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+            border-radius: 8px;
+            min-height: 80vh;
+        }
+
+        .header {
+            border-bottom: 1px dashed var(--prompt-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .prompt {
+            color: var(--prompt-color);
+            font-weight: bold;
+        }
+
+        .cmd {
+            color: white;
+            font-weight: bold;
+        }
+
+        .output {
+            margin: 15px 0 25px 0;
+            white-space: pre-wrap;
+        }
+
+        .section-title {
+            color: var(--highlight-color);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .ascii-art {
+            color: var(--highlight-color);
+            font-size: 13px;
+            white-space: pre;
+            overflow-x: auto;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: var(--highlight-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--highlight-color);
+        }
+
+        a:hover {
+            color: white;
+            border-bottom: 1px solid white;
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+        
+        .blinking-cursor {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--text-color);
+            animation: 1s blink step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { color: transparent; }
+            50% { color: var(--text-color); }
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            margin-bottom: 5px;
+        }
+        ul li::before {
+            content: ">> ";
+            color: var(--prompt-color);
+        }
+
+        /* Toolbar styles */
+        .toolbar {
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(0, 143, 17, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--prompt-color);
+        }
+
+        .btn-nav {
+            background: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            font-family: inherit;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .btn-nav:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+        .btn-nav.danger {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+        .btn-nav.danger:hover {
+            background: #ff3333;
+            color: white;
+        }
+
+        ::selection {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="header">
+            <div class="ascii-art">
+   _   _ _   _    _    _   _ 
+  | \ | | | | |  / \  | \ | |
+  |  \| | |_| | / _ \ |  \| |
+  | |\  |  _  |/ ___ \| |\  |
+  |_| \_|_| |_/_/   \_\_| \_|
+  [NETWORK ENGINEERING & AUTOMATION]
+            </div>
+            <p>Welcome to NHAN's Router Console v2.0</p>
+            <p>Connection established. Status: ONLINE.</p>
+            <p>Type commands or use the shortcut panel below to navigate.</p>
+        </div>
+
+        <div class="toolbar">
+            <span style="display: flex; align-items: center; margin-right: 10px; color: var(--prompt-color);">Shortcuts:</span>
+            <button class="btn-nav" onclick="runCommand('show about')">show about</button>
+            <button class="btn-nav" onclick="runCommand('show skills')">show skills</button>
+            <button class="btn-nav" onclick="runCommand('show ip interface brief')">show experience</button>
+            <button class="btn-nav" onclick="runCommand('show running-config')">show projects</button>
+            <button class="btn-nav danger" onclick="runCommand('clear')">clear</button>
+        </div>
+
+        <div id="terminal-content">
+            <!-- Initial content -->
+            <div>
+                <span class="prompt">Router#</span> <span class="cmd">show info</span>
+                <div class="output">
+<span class="section-title">[PROFILE INFO]</span>
+Name        : Tran Huu Nhan
+Title       : Computer Networks and Data Communications Student
+Email       : <a href="mailto:nhanhuutran009@gmail.com">nhanhuutran009@gmail.com</a>
+Phone       : 0869918250
+Location    : Ho Chi Minh City, Vietnam
+GitHub      : <a href="https://github.com/nhanhuutran007" target="_blank">github.com/nhanhuutran007</a>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <span class="prompt">Router#</span> <span id="typing-cmd"></span><span class="blinking-cursor">_</span>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+            'show about': `
+<span class="section-title">--- Career Objective ---</span>
+I am seeking an IT Network Intern position where I can apply my knowledge in Computer Networks and Data Communications, together with the CCNA foundation I have developed at VnPro, in a practical working environment. 
+
+<span class="highlight">Development Focus:</span> System analysis, network troubleshooting, and technical infrastructure operations in enterprise environments.
+
+<span class="section-title">--- Education ---</span>
+> Ton Duc Thang University (2023 - Present)
+> Major: Computer Networks and Data Communications
+> GPA: 3.2/4.0 | Attendance: 100/100
+`,
+            'show skills': `
+<span class="section-title">--- Technical Skills ---</span>
+Networking       [########--] 80%  (TCP/IP, VLAN, Routing, Switching, NAT, DHCP, DNS)
+Network Devices  [########--] 80%  (Cisco configuration, ASA Firewall)
+Network Security [#######---] 70%  (Access control, risk analysis, troubleshooting)
+Systems          [#######---] 70%  (Server admin, monitoring, troubleshooting)
+Automation       [########--] 80%  (Python, Netmiko, MCP, Scripting)
+Tools            [#########-] 90%  (Cisco Packet Tracer, Git, Linux, LaTeX)
+
+<span class="section-title">--- Soft Skills ---</span>
+Teamwork          : Collaborates effectively in group environments.
+Communication     : Customer consulting experience.
+Language          : APTIS ESOL B2 certification.
+Analytical        : Logical problem solving in network and system issues.
+
+<span class="section-title">--- Interests ---</span>
+Automation tool deployment, network infrastructure, web building, product photography.
+`,
+            'show ip interface brief': `
+<span class="section-title">--- Work Experience & Activities ---</span>
+
+Interface                  Status                Protocol   Description
+-----------------------------------------------------------------------------------------
+VnPro-Intern               Up                    Up         [2026 - Present] IT Network Intern
+  - Administered real network devices and supported stable operation of servers and Cisco ASA firewall.
+  - Studied enterprise network systems, infrastructure deployment models.
+  - Supported connectivity testing, basic troubleshooting.
+
+TDTU-Youth-Union           Administratively Down Down       [2023 - 2026] Executive Committee Member
+  - Organized community and student activities.
+
+7-Eleven-Sales             Administratively Down Down       [2023 - 2024] Sales Staff
+  - Consulted customers on company products and services.
+
+ICON-Club-Lead             Up                    Up         [2025 - Present] Technical Team Leader
+  - Organized IT-related academic activities for university students.
+`,
+            'show running-config': `
+<span class="section-title">--- Personal Projects (Running Configuration) ---</span>
+
+!
+project 1
+ name Netmiko-MCP: AI-Assisted Cisco Network Device Automation
+ description Built a solution for automating Cisco network device configuration and management using Python, Netmiko, and Model Context Protocol (MCP).
+ detail Integrated an AI-assisted layer for executing show commands, ping tests, and applying configurations via natural language.
+!
+project 2
+ name ESP32-BluFi Stack Overflow: Buffer Overflow Analysis
+ description Researched NCC-BluFi-Ref-WXR vulnerability in Espressif Systems' BluFi protocol.
+ detail Reproduced attack scenario on real ESP32 hardware and analyzed denial-of-service risks. Analyzed root cause in C source code.
+!
+project 3
+ name UniDorm Website: Dormitory Student Management System
+ description Developed a web application to manage student information, room assignments, residency status.
+ detail Stack: PHP, SCSS, CSS, JavaScript.
+!
+end
+`
+        };
+
+        const terminalContent = document.getElementById('terminal-content');
+        const typingCmd = document.getElementById('typing-cmd');
+        let isTyping = false;
+
+        function runCommand(cmd) {
+            if (isTyping) return;
+            
+            if (cmd === 'clear') {
+                terminalContent.innerHTML = '';
+                return;
+            }
+
+            isTyping = true;
+            typingCmd.innerHTML = '';
+            
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                typingCmd.innerHTML += cmd.charAt(i);
+                i++;
+                if (i >= cmd.length) {
+                    clearInterval(typeInterval);
+                    setTimeout(() => {
+                        executeCommand(cmd);
+                    }, 200); // Slight delay for realism
+                }
+            }, 30); // Typing speed
+        }
+
+        function executeCommand(cmd) {
+            let output = contentData[cmd];
+            
+            if (!output) {
+                output = "Command not found. Use the shortcuts above or type a valid command.";
+            }
+            
+            const cmdBlock = document.createElement('div');
+            cmdBlock.innerHTML = `
+                <span class="prompt">Router#</span> <span class="cmd">${cmd}</span>
+                <div class="output">${output}</div>
+            `;
+            
+            terminalContent.appendChild(cmdBlock);
+            typingCmd.innerHTML = '';
+            isTyping = false;
+            
+            // Auto scroll to bottom
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
